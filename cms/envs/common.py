@@ -79,8 +79,8 @@ FEATURES = {
     # Allow editing of short description in course settings in cms
     'EDITABLE_SHORT_DESCRIPTION': True,
 
-    # Hide any Personally Identifiable Information from application logs
-    'SQUELCH_PII_IN_LOGS': False,
+    # Toggles embargo functionality
+    'EMBARGO': False,
 }
 ENABLE_JASMINE = False
 
