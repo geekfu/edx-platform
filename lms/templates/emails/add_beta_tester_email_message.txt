@@ -8,8 +8,9 @@ ${_("You have been invited to be a beta tester for {course_name} at {site_name} 
 		site_name=site_name
 	)}
 
-${_("Visit {course_about_url} to join the course and begin the beta test.").format(course_about_url=course_about_url)}
-
+% if course_about_url is not None:
+  ${_("Visit {course_about_url} to join the course and begin the beta test.").format(course_about_url=course_about_url)}
+% endif
 ----
 ${_("This email was automatically sent from {site_name} to "
 	"{email_address}").format(

@@ -3,15 +3,22 @@ Unit tests for instructor.enrollment methods.
 """
 
 import json
+import mock
 from abc import ABCMeta
 from courseware.models import StudentModule
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.utils import override_settings
 from student.tests.factories import UserFactory
+from xmodule.modulestore.tests.factories import CourseFactory
+from courseware.tests.modulestore_config import TEST_DATA_MIXED_MODULESTORE
 
 from student.models import CourseEnrollment, CourseEnrollmentAllowed
 from instructor.enrollment import (
     EmailEnrollmentState,
     enroll_email,
+    get_email_params,
     reset_student_attempts,
     send_beta_role_email,
     unenroll_email
@@ -385,3 +392,58 @@ class TestSendBetaRoleEmail(TestCase):
         error_msg = "Unexpected action received '{}' - expected 'add' or 'remove'".format(bad_action)
         with self.assertRaisesRegexp(ValueError, error_msg):
             send_beta_role_email(bad_action, self.user, self.email_params)
+
+
+@override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
+class TestGetEmailParams(TestCase):
+    """
+    Test conditional email parameters
+    """
+    def setUp(self):
+        self.course = CourseFactory.create()
+
+    def test_normal_params(self):
+        site = settings.SITE_NAME
+        course_about_url = u'https://{}{}'.format(
+            site,
+            reverse('about_course', kwargs={'course_id': self.course.id})
+        )
+        registration_url = u'https://{}{}'.format(
+            site,
+            reverse('student.views.register_user')
+        )
+        course_url = u'https://{}{}'.format(
+            site,
+            reverse('course_root', kwargs={'course_id': self.course.id})
+        )
+
+        result = get_email_params(self.course, False)
+
+        self.assertEqual(result['auto_enroll'], False)
+        self.assertEqual(result['course_about_url'], course_about_url)
+        self.assertEqual(result['registration_url'], registration_url)
+        self.assertEqual(result['course_url'], course_url)
+
+    def test_marketing_params(self):
+        site = settings.SITE_NAME
+        course_about_url = u'https://{}{}'.format(
+            site,
+            reverse('about_course', kwargs={'course_id': self.course.id})
+        )
+        registration_url = u'https://{}{}'.format(
+            site,
+            reverse('student.views.register_user')
+        )
+        course_url = u'https://{}{}'.format(
+            site,
+            reverse('course_root', kwargs={'course_id': self.course.id})
+        )
+
+        with mock.patch.dict('django.conf.settings.FEATURES', {'ENABLE_MKTG_SITE': True}):
+            result = get_email_params(self.course, True)
+
+        self.assertEqual(result['auto_enroll'], True)
+        self.assertEqual(result['course_about_url'], None)
+        self.assertEqual(result['registration_url'], registration_url)
+        self.assertEqual(result['course_url'], course_url)
+
