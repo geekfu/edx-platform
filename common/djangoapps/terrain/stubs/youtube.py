@@ -98,11 +98,12 @@ class StubYouTubeHandler(StubHttpRequestHandler):
 
         # Construct the response content
         callback = self.get_params['callback']
+        youtube_metadata = json.loads(requests.get('http://gdata.youtube.com/feeds/api/videos/OEoXaMPEzfM?v=2&alt=jsonc').text)
         data = OrderedDict({
             'data': OrderedDict({
                 'id': youtube_id,
                 'message': message,
-                'duration': 60 if youtube_id == 'OEoXaMPEzfM' else 77,
+                'duration': youtube_metadata['data']['duration'],
             })
         })
         response = "{cb}({data})".format(cb=callback, data=json.dumps(data))
