@@ -360,7 +360,7 @@ In this example, the Student Answer Distribution report is open in Microsoft Exc
 
 .. note:: Refer to the help for the spreadsheet application that you use for information on using these options. You may have to make changes to your spreadsheet, such as reordering columns. Save a copy of the file you originally downloaded as a backup before you begin. 
 
-While most students in this example selected the correct answer, the number of students who selected an incorrect answer, and the answer(s) they selected, can guide review of, and future changes to, your courseware or this problem.
+While most students in this example selected the correct answer, the number of students who selected an incorrect answer, and the answer(s) they selected, can guide review of, and future changes to, the courseware.
 
 ===================================================
 View a Histogram of Scores for a Single Problem
