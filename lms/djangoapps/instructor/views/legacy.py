@@ -1392,11 +1392,12 @@ def _do_enroll_students(course, course_id, students, overload=False, auto_enroll
         )
         # We can't get the url to the course's About page if the marketing site is enabled.
         course_about_url = None
-        if not settings.ENABLE_MKTG_SITE:
-            course_about_url = u'https://{}/courses/{}/about'.format(
+        if not settings.FEATURES.get('ENABLE_MKTG_SITE', False):
+            course_about_url = u'https://{}{}'.format(
                 stripped_site_name,
-                course.id
+                reverse('about_course', kwargs={'course_id': course.id})
             )
+
         # Composition of email
         d = {
             'site_name': stripped_site_name,

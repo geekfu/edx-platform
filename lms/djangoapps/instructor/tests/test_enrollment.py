@@ -397,53 +397,42 @@ class TestSendBetaRoleEmail(TestCase):
 @override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
 class TestGetEmailParams(TestCase):
     """
-    Test conditional email parameters
+    Test what URLs the function get_email_params returns under different
+    production-like conditions.
     """
     def setUp(self):
         self.course = CourseFactory.create()
 
-    def test_normal_params(self):
+        # Explicitly construct what we expect the course URLs to be
         site = settings.SITE_NAME
-        course_about_url = u'https://{}{}'.format(
+        self.course_url = u'https://{}/courses/{}/'.format(
             site,
-            reverse('about_course', kwargs={'course_id': self.course.id})
+            self.course.id
         )
-        registration_url = u'https://{}{}'.format(
+        self.course_about_url = self.course_url + 'about'
+        self.registration_url = u'https://{}/register'.format(
             site,
-            reverse('student.views.register_user')
-        )
-        course_url = u'https://{}{}'.format(
-            site,
-            reverse('course_root', kwargs={'course_id': self.course.id})
         )
 
+    def test_normal_params(self):
+        # For a normal site, what do we expect to get for the URLs?
+        # Also make sure `auto_enroll` is properly passed through.
         result = get_email_params(self.course, False)
 
         self.assertEqual(result['auto_enroll'], False)
-        self.assertEqual(result['course_about_url'], course_about_url)
-        self.assertEqual(result['registration_url'], registration_url)
-        self.assertEqual(result['course_url'], course_url)
+        self.assertEqual(result['course_about_url'], self.course_about_url)
+        self.assertEqual(result['registration_url'], self.registration_url)
+        self.assertEqual(result['course_url'], self.course_url)
 
     def test_marketing_params(self):
-        site = settings.SITE_NAME
-        course_about_url = u'https://{}{}'.format(
-            site,
-            reverse('about_course', kwargs={'course_id': self.course.id})
-        )
-        registration_url = u'https://{}{}'.format(
-            site,
-            reverse('student.views.register_user')
-        )
-        course_url = u'https://{}{}'.format(
-            site,
-            reverse('course_root', kwargs={'course_id': self.course.id})
-        )
-
+        # For a site with a marketing front end, what do we expect to get for the URLs?
+        # Also make sure `auto_enroll` is properly passed through.
         with mock.patch.dict('django.conf.settings.FEATURES', {'ENABLE_MKTG_SITE': True}):
             result = get_email_params(self.course, True)
 
         self.assertEqual(result['auto_enroll'], True)
+        # We should *not* get a course about url (LMS doesn't know what the marketing site URLs are)
         self.assertEqual(result['course_about_url'], None)
-        self.assertEqual(result['registration_url'], registration_url)
-        self.assertEqual(result['course_url'], course_url)
+        self.assertEqual(result['registration_url'], self.registration_url)
+        self.assertEqual(result['course_url'], self.course_url)
 
