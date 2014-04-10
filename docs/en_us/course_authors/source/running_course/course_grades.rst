@@ -349,7 +349,7 @@ As an example, you define a text input question in Studio to have a single corre
 .. image:: ../Images/SAD_Answer_Review.png
     :alt: In Excel, 5 rows show 5 answer values, 4 of which show comprehension of the question, but only 1 answer is marked as correct
 
-However, as you view the report you notice other student answers that you did not set up to be marked as correct in Studio, but that you might (or might not) also consider to be correct, such as "Warfarin or Coumadin". The **Correct Answer** column shows that the other answers were marked incorrect (0), but for future iterations of your course you may want to reevaluate the wording of your question or how other answers are scored.
+However, as you view the report you notice other student answers that you did not set up to be marked as correct in Studio, but that you might (or might not) also consider to be correct, such as "Warfarin or Coumadin". The **Correct Answer** column shows that the other answers were marked incorrect (0), but for future iterations of your course you may want to revise the question or update the problem to evaluate additional variations of the answer as correct.
 
 Many spreadsheet applications offer data visualization options, such as charts or graphs. Charts can help make your students' common misconceptions  easier to identify. 
 
